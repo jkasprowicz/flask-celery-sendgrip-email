@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Manager</title>
+</head>
+<body>
+    <h1>Task Manager</h1>
+    
+    <form method="POST" action="/">
+        <label for="task_name">Task Name:</label>
+        <input type="text" id="task_name" name="task_name" required><br><br>
+    
+        <label for="deadline">Deadline (YYYY-MM-DD HH:MM):</label>
+        <input type="datetime-local" id="deadline" name="deadline" required><br><br>
+    
+        <label for="expiration_period">Expiration Period (in days):</label>
+        <input type="number" id="expiration_period" name="expiration_period" required><br><br>
+    
+        <button type="submit">Add Task</button>
+    </form>
+    
+
+    <h2>Tasks</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Deadline</th>
+                <th>Expiration Period</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for task in tasks %}
+            <tr>
+                <td>{{ task.id }}</td>
+                <td>{{ task.name }}</td>
+                <td>{{ task.deadline }}</td>
+                <td>{{ task.expiration_period }} minutes</td>
+                <td>{{ task.status }}</td>
+                <td>
+                    <form method="POST" action="{{ url_for('update_status', task_id=task.id, status='pending') }}">
+                        <button type="submit">Mark as Pending</button>
+                    </form>
+                    <form method="POST" action="{{ url_for('update_status', task_id=task.id, status='completed') }}">
+                        <button type="submit">Mark as Completed</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
