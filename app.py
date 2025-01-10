@@ -5,10 +5,11 @@ from sendgrid.helpers.mail import Mail
 import datetime
 import os
 
+
 app = Flask(__name__)
 
 # Flask Configurations
-app.config['SECRET_KEY'] = 'your-secret-key'  # Use this for Flask session management
+app.config['SECRET_KEY'] = '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'  # Use this for Flask session management
 app.config['SENDGRID_API_KEY'] = os.getenv('SENDGRID_API_KEY')  # Fetch from environment variables
 app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379/0'
 
@@ -22,6 +23,7 @@ tasks = []
 # Celery task to send emails
 @celery.task
 def send_email_task(recipient, subject, content):
+
     sg = SendGridAPIClient(app.config['SENDGRID_API_KEY'])
     message = Mail(
         from_email='joaokasprowicz@hotmail.com',  # Replace with your verified SendGrid sender email
