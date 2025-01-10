@@ -10,7 +10,6 @@ app = Flask(__name__)
 
 # Flask Configurations
 app.config['SECRET_KEY'] = ''  # Use this for Flask session management
-app.config['SENDGRID_API_KEY'] = os.getenv('SENDGRID_API_KEY')  # Fetch from environment variables
 app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379/0'
 
 # Configure Celery
