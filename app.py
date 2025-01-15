@@ -9,7 +9,7 @@ from decouple import config
 app = Flask(__name__)
 
 app.config['CELERY_BROKER_URL'] = config('CELERY_BROKER_URL')
-app.config['SENDGRID_API_KEY'] = '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'
+app.config['SENDGRID_API_KEY'] = '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'
 
 # Configure Celery
 celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
@@ -22,7 +22,7 @@ tasks = []
 @celery.task
 def send_email_task(recipient, subject, content):
     message = Mail(
-        from_email="yasmimbenevides@live.com",  # Replace with your verified sender email
+        from_email="joao.kasprowicz@univali.br",  # Replace with your verified sender email
         to_emails=recipient,
         subject=subject,
         html_content=content
