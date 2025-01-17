@@ -1,40 +1,45 @@
 import os
 from flask import Flask, render_template, request, redirect, url_for
 from celery import Celery
-from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import Mail
+from flask_mail import Mail, Message
 import datetime
 from decouple import config
 
 app = Flask(__name__)
 
-app.config['CELERY_BROKER_URL'] = config('CELERY_BROKER_URL')
-app.config['SENDGRID_API_KEY'] = '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'
+# Configuration for Flask-Mail
+app.config['MAIL_SERVER'] = 'smtp.mailtrap.io'
+app.config['MAIL_PORT'] = 2525
+app.config['MAIL_USERNAME'] = config('MAILTRAP_USERNAME')  # Use your Mailtrap username
+app.config['MAIL_PASSWORD'] = config('MAILTRAP_PASSWORD')  # Use your Mailtrap password
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USE_SSL'] = False
 
 # Configure Celery
+app.config['CELERY_BROKER_URL'] = config('CELERY_BROKER_URL')
 celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
 celery.conf.update(app.config)
 
 # In-memory mock database for tasks
 tasks = []
 
+# Initialize Flask-Mail
+mail = Mail(app)
+
 # Celery task to send emails
 @celery.task
 def send_email_task(recipient, subject, content):
-    message = Mail(
-        from_email="joao.kasprowicz@univali.br",  # Replace with your verified sender email
-        to_emails=recipient,
-        subject=subject,
-        html_content=content
-    )
     try:
-        sg = SendGridAPIClient(app.config['SENDGRID_API_KEY'])
-        response = sg.send(message)
-        return response.status_code, response.body, response.headers
+        msg = Message(
+            subject=subject,
+            sender="your-email@example.com",  # Replace with your verified sender email
+            recipients=[recipient],
+            html=content
+        )
+        mail.send(msg)
+        return 202, "Email sent successfully"
     except Exception as e:
-        import traceback
-        error_details = traceback.format_exc()
-        return 500, f"Exception occurred: {e}\nDetails:\n{error_details}", None
+        return 500, f"Exception occurred: {e}"
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
