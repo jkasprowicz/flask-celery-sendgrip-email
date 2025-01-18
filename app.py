@@ -9,7 +9,7 @@ from decouple import config
 app = Flask(__name__)
 
 app.config['CELERY_BROKER_URL'] = config('CELERY_BROKER_URL')
-app.config['SENDGRID_API_KEY'] = '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'
+app.config['SENDGRID_API_KEY'] = ''
 
 # Configure Celery
 celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
